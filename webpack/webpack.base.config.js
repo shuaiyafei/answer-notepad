@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const isDev = require('../config/isDev');
 
 const entryFile = fs.readdirSync(path.resolve(__dirname, '../views'));
 const entry = {};
@@ -14,12 +15,12 @@ entryFile.forEach(item => {
             });
         } else {
             Object.assign(entry, {
-                [name]: path.resolve(__dirname, `../client/${name}/${name}.js`)
+                [name]: isDev ? [path.resolve(__dirname, `../client/${name}/${name}.js`), 'webpack-hot-middleware/client?noInfo=true&reload=true'] : path.resolve(__dirname, `../client/${name}/${name}.js`)
             });
         }
         Object.assign(output, {
             path: `${path.resolve(__dirname, `./../public`)}`,
-            filename: `script/[name].js?[hash]`,
+            filename: isDev ? `script/[name].hash.js` : `script/[name].[chunkhash].js`,
         });
     }
 });

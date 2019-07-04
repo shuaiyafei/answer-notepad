@@ -13,9 +13,11 @@ const logger = require('koa-logger');
 const static = require('koa-static');
 const path = require('path');
 const ejs = require('ejs');
+const webpack = require('webpack');
 const routes = require('./routes');
 const port = require('./config');
 const getIp = require('./utils/getIp');
+const version = require('./utils/getVersion');
 
 onerror(app);
 
@@ -30,33 +32,30 @@ app.use(views(__dirname + '/views', {
 }));
 
 if (process.env.NODE_ENV === 'dev') {
-  const webpack = require('webpack');
   const webpackDevMiddleware = require('koa-webpack-dev-middleware');
   const webpackHotMiddleware = require('koa-webpack-hot-middleware');
   const webpackDevConfig = require('./webpack/webpack.dev.config');
-
   const compiler = webpack(webpackDevConfig);
-  // 定义热更新静态文件
+
   app.use(webpackDevMiddleware(compiler));
-  app.use(webpackHotMiddleware(compiler, {
-    log: false,
-    heartbeat: 2000,
-  }));
+  app.use(webpackHotMiddleware(compiler));
 }
 
 if (process.env.NODE_ENV === 'prd') {
-  const webpack = require('webpack');
-  //   const webpackPrdConfig = require('./webpack/webpack.prd.config');
-  const command = 'webpack --config webpack/webpack.prd.config.js';
-  exec(command, (error, stdout, stderr) => {
-    if (error) {
-      console.error(`执行出错: ${error}`);
-      return;
-    }
-    console.log(`stdout: ${stdout}`);
-    console.log(`stderr: ${stderr}`);
+  const workerProcess = exec('webpack --config webpack/webpack.prd.config.js', {})
+  workerProcess.stdout.on('data', function (data) {
+    console.log('stdout: ' + data);
+  });
+  workerProcess.stderr.on('data', function (data) {
+    console.log('stderr: ' + data);
   });
 }
+app.use(async (ctx, next) => {
+  Object.assign(ctx.state, {
+    version
+  });
+  await next();
+});
 
 app.use(router.routes());
 app.use(router.allowedMethods());
