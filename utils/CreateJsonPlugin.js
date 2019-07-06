@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const idDev = require('../config/isDev');
 
 class BuildEndPlugin {
     constructor(props) {
@@ -9,11 +10,14 @@ class BuildEndPlugin {
         const currentPath = path.resolve(__dirname, `../public/${this.filename}`);
         const chunkName = {};
         const chunkObj = compilation.chunks;
+        
         chunkObj.forEach(item => {
             Object.assign(chunkName, {
-                [item.name]: item.hash
+                [item.name]: idDev ? compilation.hash : item.hash
             });
         });
+
+        console.log(chunkName);
         if (!fs.existsSync(currentPath)) {
             fs.mkdir(`public/version`, () => {
                 fs.writeFile(currentPath, JSON.stringify(chunkName));

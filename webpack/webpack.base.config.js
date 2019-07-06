@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const isDev = require('../config/isDev');
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 const entryFile = fs.readdirSync(path.resolve(__dirname, '../views'));
 const entry = {};
@@ -9,7 +10,7 @@ const output = {};
 entryFile.forEach(item => {
     if (/\.html$/.test(item)) {
         const name = item.split('.')[0];
-        if (name === 'spa') {
+        if (name === 'notepad') {
             Object.assign(entry, {
                 [name]: path.resolve(__dirname, `../client/${name}/main.js`)
             });
@@ -20,7 +21,7 @@ entryFile.forEach(item => {
         }
         Object.assign(output, {
             path: `${path.resolve(__dirname, `./../public`)}`,
-            filename: isDev ? `script/[name].hash.js` : `script/[name].[chunkhash].js`,
+            filename: isDev ? `script/[name].[hash].js` : `script/[name].[chunkhash].js`,
         });
     }
 });
@@ -44,7 +45,10 @@ const options = {
                 use: 'url-loader'
             }
         ]
-    }
+    },
+    plugins: [
+        new VueLoaderPlugin()
+    ]
 };
 
 module.exports = options;

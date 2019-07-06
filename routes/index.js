@@ -1,7 +1,9 @@
 const indexAction = require('../controller/indexAction');
-const spaAction = require('../controller/spaAction');
+const testAction = require('../controller/testAction');
+const notepadAction = require('../controller/notepadAction');
 
 module.exports = (router) => {
   router.get('/', indexAction.renderPage);
-  router.get('/spa', spaAction.renderPage);
+  router.get('/test', testAction.renderPage);
+  router.get('/notepad', notepadAction.renderPage);
 };

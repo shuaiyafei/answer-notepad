@@ -1,2 +1,1 @@
-alert(123444);
-alert(555);
+require('./index.scss');

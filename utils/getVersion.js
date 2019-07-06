@@ -9,11 +9,6 @@ if (!isDev) {
 }
 
 let content = fs.existsSync(targetPath) ? fs.readFileSync(targetPath) : {};
+content = JSON.parse(content);
 
-if (Object.keys(content).length) {
-    content = JSON.parse(content);
-    for (let i in content) {
-        content[i] = `${i}.hash`;
-    }
-}
 module.exports = content;

@@ -27,7 +27,7 @@ const options = merge(baseWebpackConfig, {
       filename: 'version/dev-ver.json'
     }),
     new OpenBrowserPlugin({
-      url: `http://${getIp()}:${port}`
+      url: `http://${getIp() ? getIp() : `127.0.0.1` }:${port}`
     })
   ]
 });
