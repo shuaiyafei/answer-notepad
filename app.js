@@ -17,7 +17,7 @@ const webpack = require('webpack');
 const routes = require('./routes');
 const port = require('./config');
 const getIp = require('./utils/getIp');
-const version = require('./utils/getVersion');
+const getVersion = require('./utils/getVersion');
 
 onerror(app);
 
@@ -52,7 +52,7 @@ if (process.env.NODE_ENV === 'prd') {
 }
 app.use(async (ctx, next) => {
   Object.assign(ctx.state, {
-    version
+    version: getVersion()
   });
   await next();
 });
