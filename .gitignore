@@ -2,3 +2,4 @@
 .editorconfig
 .eslintignore
 .eslintrc.yml
+package-lock.json
