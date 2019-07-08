@@ -41,7 +41,7 @@ const options = {
                 exclude: /node_modules/
             },
             {
-                test: /\.jpg|png|gif|jpeg$/,
+                test: /\.(jpg|png|gif|jpeg|woff|svg|eot|ttf)$/,
                 use: 'url-loader'
             }
         ]

@@ -8,5 +8,10 @@ module.exports = () => {
         targetPath = path.resolve(__dirname, '../public/version/prd-ver.json');
     }
     let content = fs.existsSync(targetPath) ? fs.readFileSync(targetPath) : {};
-    return JSON.parse(content);
+    try {
+        content = JSON.parse(content.toString());
+    } catch (e) {
+        content = {};
+    }
+    return content;
 };

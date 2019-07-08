@@ -1,7 +1,7 @@
 <template>
   <div class="new-wrap">
     <div class="new-content">
-      <textarea v-model="content" v-focus></textarea>
+      <el-input type="textarea" autofocus="true" v-model="content" @change="updateContent"></el-input>
     </div>
   </div>
 </template>
@@ -11,7 +11,9 @@ export default {
   data() {
     return {
       key: "",
-      content: ""
+      content: "",
+      query: "",
+      localData: ""
     };
   },
   directives: {
@@ -21,27 +23,49 @@ export default {
       }
     }
   },
-  watch: {
-    content(v) {
-      let localData = this.getLocalData();
-      localData[this.key].content = v;
-      localData[this.key].time = +new Date();
-      this.setLcalData(localData);
-    }
-  },
   mounted() {
-    const query = this.$route.query;
-    if (Object.keys(query).length) {
-      this.key = query.key;
-      this.content = this.getLocalData()[this.key].content;
+    // 获取新建参数
+    this.query = this.$route.query;
+    // 获取本地存储数据
+    this.localData = this.getLocalData();
+    if (Object.keys(this.query).length) {
+      this.key = this.query.key;
+      this.content = this.localData[this.key].content;
     }
   },
   methods: {
     getLocalData() {
-      return JSON.parse(localStorage.todoList);
+      let result = [];
+      if (localStorage.todoList) {
+        result = JSON.parse(localStorage.todoList);
+      }
+      return result;
     },
     setLcalData(res) {
-        localStorage.setItem('todoList', JSON.stringify(res));
+      localStorage.setItem("todoList", JSON.stringify(res));
+    },
+    updateContent() {
+      // 编辑
+      if (Object.keys(this.query).length) {
+        this.localData[this.key].content = this.content;
+        this.localData[this.key].time = +new Date();
+        this.localData.unshift(this.localData.splice(this.key, 1)[0]);
+        this.setLcalData(this.localData);
+      } else {
+        // 新建
+        if (this.localData.length === 0) {
+          this.localData.push({
+            content: this.content,
+            time: +new Date()
+          });
+        } else {
+          this.localData.unshift({
+            content: this.content,
+            time: +new Date()
+          });
+        }
+        this.setLcalData(this.localData);
+      }
     }
   }
 };
@@ -49,10 +73,13 @@ export default {
 
 <style lang="scss">
 .new-content {
-  width: 100vw;
-  height: 100vh;
+  width: calc(100vw - 10px);
+  height: calc(100vh - 20px);;
   display: block;
-  & > textarea {
+  & > .el-textarea {
+    height: 100%;
+  }
+  & textarea {
     width: 100%;
     height: 100%;
     background-color: transparent;
@@ -60,6 +87,7 @@ export default {
     border: 0 none;
     outline: none;
     resize: none;
+    font-size: 20px;
   }
 }
 </style>
