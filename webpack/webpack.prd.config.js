@@ -19,9 +19,9 @@ const options = merge(baseWebpackConfig, {
         new CleanWebpackPlugin({
             cleanOnceBeforeBuildPatterns: ['script', 'style'],
         }),
-        // new ExtractTextPlugin({
-        //     filename: 'style/[name].css?[contenthash]'
-        // }),
+        new ExtractTextPlugin({
+            filename: 'style/[name].[md5:contenthash:hex:20].css'
+        }),
         new CreateJsonPlugin({
             filename: 'version/prd-ver.json'
         })

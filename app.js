@@ -51,6 +51,12 @@ if (process.env.NODE_ENV === 'prd') {
   });
 }
 app.use(async (ctx, next) => {
+  // 解决hash 文件没有生成的问题
+  await new Promise((res) => {
+    setTimeout(() => {
+      res();
+    }, 0);
+  });
   Object.assign(ctx.state, {
     version: getVersion()
   });
